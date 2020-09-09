@@ -15,17 +15,15 @@ public class RewardsService {
 	
 	private RewardsDao rewardsDao;
 
-	public Customer calcuateRewardPoints(String customerId, Integer month)
+	public CustomerRewardsDTO calcuateRewardPoints(String customerId, Integer month)
 	{
-		
-
 		Date today = new Date();
 		Calendar cal = new GregorianCalendar();
 		cal.setTime(today);
 		cal.add(Calendar.DAY_OF_MONTH, -90);
 		Date today90 = cal.getTime();
 		// Obtain all orders for past 90 days
-		Customer customerDetails = rewardsDao.fetchCustomerOrderDeptDataLeftJoin(customerId, today90);
+		CustomerRewardsDTO customerDetails = rewardsDao.fetchCustomerOrderDeptDataLeftJoin(customerId, today90);
 
 		int rewardsPoints = 0; totalRewards = 0;
 
@@ -43,6 +41,7 @@ public class RewardsService {
 				// 1 reward point
 				rewardsPoints = (orderTotal - 50);
 			} else if (orderTotal > 100) {
+				// 2 points for purchases over 100.
 				rewardPoints = ((orderTotal- 100) *2) + (orderTotal - 50);
 			}
 				totalRewards = totalRewards + rewardPoints;
@@ -50,8 +49,8 @@ public class RewardsService {
 			}
 
 		}
-		customerDetails.setRewardPoints(totalRewards);
-	
+		customerDetails.setRewardPoints(totalRewards.toString());
+
 		
 		return customerDetails;
 	}
